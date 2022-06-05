@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- <link href="toast.min.css" rel="stylesheet"> -->
+	<!-- <script src="toast.min.js"></script> -->
+    <title>Document</title>
+
+    <style>
+        table{
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        th, td {
+			width: 8px;
+			height: 8px;
+			font-size: 40%;
+            padding: 0;
+			margin: 0;
+            border: 0.1px solid #cdcdcd;
+			cursor: default;
+        }
+		th, td:focus { 
+			text-indent: -9999em; 
+		}
+	    th, td:focus {
+			outline : none;
+		}
+		
+		th, td:focus {
+			outline: none;
+			box-shadow: 0 0 1px 1px #4d90f0;
+		}
+		th, td:focus::-moz-placeholder {
+			color: transparent;
+		}
+		th, td:focus::-webkit-input-placeholder {
+			color: transparent;
+		}
+        canvas{
+			font-size: 40%;
+
+			margin: 0 auto;
+			padding-left: 25%;
+			padding-bottom: 5%;
+			/* background:gray;
+            border: none;
+			cursor: crosshair; */
+        }
+		#container {
+			padding: 10px;
+			width: 110px;
+			height: 220px;
+			border: 0.1px solid #cdcdcd;
+		}
+		
+    </style>
+    <script type="text/javascript">  	
+	
+	function drawPast( id_canvas ) {
+		var canvas = document.getElementById( id_canvas );
+		try {
+			if (canvas.getContext) {
+				var ctx = canvas.getContext('2d');
+				ctx.fillRect(0, 0, 8, 8);
+			}		
+		} catch (e) {
+			null;
+		}
+	}
+	
+	function drawPastClear( id_canvas ) {
+		var canvas = document.getElementById( id_canvas );
+		try {
+			if (canvas.getContext) {
+				var ctx = canvas.getContext('2d');
+				ctx.clearRect(0, 0, 8, 8);
+			}		
+		} catch (e) {
+			null;
+		}
+	}
+	
+    </script>
+</head>
+<body>
+
+<div id="container">
+	<script>
+	
+	var shape_1 = ['04', '05', '06', '15'];
+	var shape_mod = [];
+	var arr_num = 0;
+	var wall = [];
+	
+	
+		function drawArea()
+		{
+			document.writeln("<table>");		
+			for (var j = 0; j < 15; j++) {
+				document.writeln("<tr>");
+
+				for (var i = 0; i < 10; i++) {
+					document.writeln("<td id=" + j + "" + i + "><canvas id='canva_" + j + "" + i + "' width='4' height='4'></canvas></td>");
+				}
+				document.writeln("</tr>");
+			}
+			document.writeln("</table>");	
+
+			shape_mod = shape_1;
+			drawShape();			
+		}
+		
+		function downValidate() 
+		{
+			var down_wall = [140, 141, 142, 143, 144, 145, 146, 147, 148, 149];
+			<!-- var down_wall = [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]; -->
+			var j = 0;
+			<!-- console.log(shape_mod); -->
+			shape_mod.forEach( (item) => {
+
+				if ( down_wall.findIndex ( (el) => el == item ) != -1 ) {
+					j++;
+				} 
+
+			});
+
+			return j == 0 ? 1 : 0;
+		}
+
+		function drawShape() 
+		{			
+			
+			drawShapePaint(shape_mod);
+			
+			<!-- if ( shape_mod[shape_mod.length - 1].toString().split('')[0] != '9') { -->
+			if ( downValidate() == 1 ) {
+				
+				var i = 0;
+				var arr_vilidate = wall.map(item => Number(item) - 10);
+				
+				for ( val of shape_mod ) {
+					if ( arr_vilidate.includes(Number(val)) ) {	
+						i++;
+					}
+				}					
+				
+				if ( i == 0 ) {			
+				
+				setTimeout( clearShape, 1000, shape_mod);	
+				
+				oneDownShape(shape_mod);
+				
+				setTimeout( drawShape, 1000);
+					
+				} else {
+					wall = wall.concat(shape_mod);
+					wall.sort( (a, b) => a - b );;
+					recurPoint(wall);
+					console.log(wall);
+				}	
+
+			} else {
+			wall = wall.concat(shape_mod);
+			wall.sort( (a, b) => a - b );;
+			recurPoint(wall);
+			console.log(wall);
+			}			
+			
+		}
+		
+		
+		function recurPoint(arr) {
+
+			var tmp = [];
+			var mas = [];
+			var del = [];
+			var wall_foo = arr;
+			var j = 0;
+			
+			for ( var i = 0; i < wall_foo.length; i++ ) {
+			
+				var m = wall_foo[i].toString().split('');
+
+				if ( m[m.length - 1] == j ) {
+				
+				    j++;
+
+					if ( j == 10 ) {
+					
+						 // извлечь начало массива и увеличиваем на 10
+						tmp = arr.splice(0, i - 9).map(item => Number(item) + 10);
+
+						//       console.log(mas);
+						//       console.log(tmp);      
+						//       console.log(arr);
+
+						del = arr.splice(0, 10);
+						//       console.log(del);
+						clearShape(del);
+
+						clearShape( tmp.map(item => Number(item) - 10) );
+						//       console.log(arr);
+						wall = tmp.concat(arr); // соединяем с остатками
+
+						//       console.log(wall);
+						wall.sort( (a, b) => a - b );
+
+						drawShapePaint(wall);
+
+						recurPoint(wall);
+					}
+				} 
+			}
+		}
+
+		
+		function drawShapePaint(shape) {
+			
+			for ( var i = 0; i < shape.length; i++ ) {
+				document.getElementById(shape[i].toString()).style.backgroundColor = 'gray';
+				document.getElementById(shape[i].toString()).style.borderColor = 'black'
+				drawPast( 'canva_' + shape[i] );	
+			}
+			
+		}
+		
+		function clearShape(shape) {
+		
+			for ( var i = 0; i < shape.length; i++) {
+				document.getElementById(shape[i].toString()).style.background = 'none';
+				document.getElementById(shape[i].toString()).style.border = '0.1px solid #cdcdcd';
+				drawPastClear( 'canva_' + shape[i] );	
+			}
+		}
+		
+		function oneLeftShape(shape) {
+			shape_mod = shape.map(item => Number(item) - 1);
+		}
+		function oneRightShape(shape) {
+			shape_mod = shape.map(item => Number(item) + 1);
+		}
+		function oneDownShape(shape) {
+			shape_mod = shape.map(item => Number(item) + 10);
+			console.log(shape_mod);
+		}
+		function rotateShape(arr, num) {
+			var tmp = [[arr[0], arr[1], arr[2], arr[3]],
+					   [arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3]],
+					   [arr[0], arr[1], arr[2], arr[3] - 9],
+					   [arr[0], arr[1] + 1, arr[2] + 1, arr[3] + 9]
+					  ];
+			num++;
+			
+			if ( num == 4 ) {
+				num = 0;
+				tmp = [[arr[0] + 9, arr[1], arr[2], arr[3]]
+					  ];
+			}
+			arr_num = num;
+			console.log(num);
+			shape_mod = tmp[num];
+		}
+		
+		drawArea();
+		
+		document.addEventListener('keydown', function(event) 
+		{
+			if (event.code == 'ArrowLeft') {
+				oneLeftShape(shape_mod);
+			} else if (event.code == 'ArrowRight') {
+				oneRightShape(shape_mod);
+			} else if (event.code == 'ArrowUp') {
+				rotateShape(shape_mod, arr_num);
+			} else if (event.code == 'ArrowDown') {
+				arr_num = 0;
+				shape_mod = shape_1;
+				drawShape();
+			}
+		});	
+		
+	</script>
+</div>
+
+</body>
+</html>
