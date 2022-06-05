@@ -4,11 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- <link href="./fonts/7fonts.ru_DS-DIGI.TTF"> -->
+	<!-- <link type="font/ttf" href="./fonts/362_LCDNOVA.ttf" rel="font/ttf"> -->
 	<!-- <link href="toast.min.css" rel="stylesheet"> -->
 	<!-- <script src="toast.min.js"></script> -->
     <title>Document</title>
 
     <style>
+
+		@font-face {
+			font-family: "DS-Digital";
+			src: url("./fonts/DS-DIGIB.TTF");
+		}
+
+		.point {
+			float: right;
+			position: relative;
+			font-family: "DS-Digital";
+		}
+		.point_l {
+			float: right;
+			position: relative;
+			font-family: "DS-Digital";
+		}
+		.display-area {
+			float: left;
+			position: absolute;	
+			top: 20px;
+		}
+		
         table{
             border-collapse: collapse;
             border-spacing: 0;
@@ -23,23 +47,24 @@
             border: 0.1px solid #cdcdcd;
 			cursor: default;
         }
-		th, td:focus { 
+		
+		span:focus { 
 			text-indent: -9999em; 
 		}
-	    th, td:focus {
+	    span:focus {
 			outline : none;
 		}
-		
-		th, td:focus {
+		span:focus {
 			outline: none;
 			box-shadow: 0 0 1px 1px #4d90f0;
 		}
-		th, td:focus::-moz-placeholder {
+		span:focus::-moz-placeholder {
 			color: transparent;
 		}
-		th, td:focus::-webkit-input-placeholder {
+		span:focus::-webkit-input-placeholder {
 			color: transparent;
 		}
+		
         canvas{
 			font-size: 40%;
 
@@ -52,7 +77,7 @@
         }
 		#container {
 			padding: 10px;
-			width: 110px;
+			width: 155px;
 			height: 220px;
 			border: 0.1px solid #cdcdcd;
 		}
@@ -89,17 +114,63 @@
 <body>
 
 <div id="container">
+	<span class="point"></span>
+	<br />
+	<span class="point_l"></span>
 	<script>
 	
-	var shape_1 = ['04', '05', '06', '15'];
-	var shape_mod = [];
-	var arr_num = 0;
-	var wall = [];
+	var shape_1   = [['04', '05', '06', '15'], 1];
+	var shape_2   = [['03', '04', '05', '06'], 2];
 	
+	var shape_all = [
+					 [['04', '05', '06', '15'], 1],
+					 [['03', '04', '05', '06'], 2]	
+					];
+					
+	var down_wall = [140, 141, 142, 143, 144, 145, 146, 147, 148, 149];
+	var up_wall   = [10,11,12,13,14,15,16,17,18,19];
+	var fin_wall  = [20,21,22,23,24,25,26,27,28,29];
+	var shape_mod = [];
+	var arr_num   = 0;
+	var wall 	  = [];
+	var _score    = 0;
+	var _speed    = 1000;
+	
+		function initGame() {
+			var _l = 0;
+			shape_mod = shape_all[0][0];
+			arr_num = 0;
+			document.querySelector('.point').innerHTML = 'S : ' + _score;
+			
+			
+			if ( Number(_score) >= 500 ) {
+				_speed = 800;
+				_l = 1;
+				
+			} 
+			if ( Number(_score) >= 1000 ) {
+				_speed = 600;
+				_l = 2;
+			} 
+			if ( Number(_score) >= 1500 ) {
+				_speed = 500;
+				_l = 3;
+			} 
+			if ( Number(_score) >= 2000 ) {
+				_speed = 400;
+				_l = 4;
+			}
+			if ( Number(_score) < 500 ) {
+				_speed = 1000;
+			} 
+			
+			document.querySelector('.point_l').innerHTML = 'L : ' + _l;
+			console.log('_speed = ' + _speed);
+		}
 	
 		function drawArea()
 		{
-			document.writeln("<table>");		
+			document.writeln("<span class='display-area'><table>");		
 			for (var j = 0; j < 15; j++) {
 				document.writeln("<tr>");
 
@@ -108,21 +179,19 @@
 				}
 				document.writeln("</tr>");
 			}
-			document.writeln("</table>");	
-
-			shape_mod = shape_1;
+			document.writeln("</table></span>");	
+			
+			initGame();
 			drawShape();			
 		}
 		
-		function downValidate() 
+		function gameValidate(args) 
 		{
-			var down_wall = [140, 141, 142, 143, 144, 145, 146, 147, 148, 149];
-			<!-- var down_wall = [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]; -->
 			var j = 0;
 			<!-- console.log(shape_mod); -->
 			shape_mod.forEach( (item) => {
 
-				if ( down_wall.findIndex ( (el) => el == item ) != -1 ) {
+				if ( args.findIndex ( (el) => el == item ) != -1 ) {
 					j++;
 				} 
 
@@ -137,7 +206,7 @@
 			drawShapePaint(shape_mod);
 			
 			<!-- if ( shape_mod[shape_mod.length - 1].toString().split('')[0] != '9') { -->
-			if ( downValidate() == 1 ) {
+			if ( gameValidate(down_wall) == 1 ) {
 				
 				var i = 0;
 				var arr_vilidate = wall.map(item => Number(item) - 10);
@@ -150,28 +219,56 @@
 				
 				if ( i == 0 ) {			
 				
-				setTimeout( clearShape, 1000, shape_mod);	
+				setTimeout( clearShape, _speed, shape_mod);	
 				
 				oneDownShape(shape_mod);
 				
-				setTimeout( drawShape, 1000);
+				setTimeout( drawShape, _speed);
 					
 				} else {
 					wall = wall.concat(shape_mod);
-					wall.sort( (a, b) => a - b );;
-					recurPoint(wall);
-					console.log(wall);
+					initGame();
+					wall.sort( (a, b) => a - b );
+					if ( gameValidate(wall) == 0 ) {
+						<!-- console.log(shape_mod); -->
+						<!-- console.log(wall); -->
+						finishGame();
+					} else {
+						recurPoint(wall);
+						<!-- console.log(wall); -->
+						startGame();			
+					}
 				}	
 
 			} else {
-			wall = wall.concat(shape_mod);
-			wall.sort( (a, b) => a - b );;
-			recurPoint(wall);
-			console.log(wall);
+				wall = wall.concat(shape_mod);
+				initGame();
+				wall.sort( (a, b) => a - b );
+				if ( gameValidate(wall) == 0 ) {
+					<!-- console.log(shape_mod); -->
+					<!-- console.log(wall); -->
+					finishGame();
+				} else {
+					recurPoint(wall);
+					<!-- console.log(wall); -->
+					startGame();			
+				}
+
 			}			
 			
 		}
 		
+
+		function startGame() {
+			
+			initGame();
+			<!-- shape_mod = shape_1; -->
+			drawShape();		
+		}
+		
+		function finishGame() {
+			console.log('method finishGame()');
+		}
 		
 		function recurPoint(arr) {
 
@@ -210,11 +307,15 @@
 						wall.sort( (a, b) => a - b );
 
 						drawShapePaint(wall);
-
+						
+						_score = _score + 100;
+						
+						initGame();
 						recurPoint(wall);
 					}
 				} 
 			}
+			console.log(wall);
 		}
 
 		
@@ -240,13 +341,16 @@
 		function oneLeftShape(shape) {
 			shape_mod = shape.map(item => Number(item) - 1);
 		}
+		
 		function oneRightShape(shape) {
 			shape_mod = shape.map(item => Number(item) + 1);
 		}
+		
 		function oneDownShape(shape) {
 			shape_mod = shape.map(item => Number(item) + 10);
-			console.log(shape_mod);
+			<!-- console.log(shape_mod); -->
 		}
+		
 		function rotateShape(arr, num) {
 			var tmp = [[arr[0], arr[1], arr[2], arr[3]],
 					   [arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3]],
@@ -261,7 +365,25 @@
 					  ];
 			}
 			arr_num = num;
-			console.log(num);
+			// console.log(num);
+			shape_mod = tmp[num];
+		}
+
+		function rotateShape_1(arr, num) {
+			var tmp = [[arr[0], arr[1], arr[2], arr[3]],
+					   [arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3]],
+					   [arr[0], arr[1], arr[2], arr[3] - 9],
+					   [arr[0], arr[1] + 1, arr[2] + 1, arr[3] + 9]
+					  ];
+			num++;
+			
+			if ( num == 4 ) {
+				num = 0;
+				tmp = [[arr[0] + 9, arr[1], arr[2], arr[3]]
+					  ];
+			}
+			arr_num = num;
+			// console.log(num);
 			shape_mod = tmp[num];
 		}
 		
@@ -270,20 +392,38 @@
 		document.addEventListener('keydown', function(event) 
 		{
 			if (event.code == 'ArrowLeft') {
+			
 				oneLeftShape(shape_mod);
+				
 			} else if (event.code == 'ArrowRight') {
+			
 				oneRightShape(shape_mod);
+				
 			} else if (event.code == 'ArrowUp') {
-				rotateShape(shape_mod, arr_num);
+			
+				<!-- if ( shape_all[0][1] == 0 ) { -->
+					if ( gameValidate(up_wall) == 1 ) {
+						rotateShape(shape_mod, arr_num);
+					<!-- }				 -->
+				}
+				<!-- if ( shape_all[0][1] == 1 ) { -->
+					<!-- if ( gameValidate(up_wall) == 1 ) { -->
+						<!-- rotateShape_1(shape_mod, arr_num); -->
+					<!-- }				 -->
+				<!-- } -->
+
 			} else if (event.code == 'ArrowDown') {
-				arr_num = 0;
-				shape_mod = shape_1;
-				drawShape();
+			
+				_speed = 10;
+				
 			}
 		});	
 		
 	</script>
+	
 </div>
+
+
 
 </body>
 </html>
