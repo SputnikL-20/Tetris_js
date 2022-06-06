@@ -119,29 +119,34 @@
 	<span class="point_l"></span>
 	<script>
 	
-	var shape_1   = [['04', '05', '06', '15'], 1];
-	var shape_2   = [['03', '04', '05', '06'], 2];
+	var shape_  = [
+					['04', '05', '06', '15'],
+					['03', '04', '05', '06'],		// Zu
+					['05', '14', '15', '24'],		// line
+					['04', '05', '14', '15'],		// куб
+				    ['06', '14', '15', '16']		// L
+				  ];
+				  
 	
-	var shape_all = [
-					 [['04', '05', '06', '15'], 1],
-					 [['03', '04', '05', '06'], 2]	
-					];
 					
-	var down_wall = [140, 141, 142, 143, 144, 145, 146, 147, 148, 149];
-	var up_wall   = [10,11,12,13,14,15,16,17,18,19];
-	var fin_wall  = [20,21,22,23,24,25,26,27,28,29];
+	var down_wall = [140,141,142,143,144,145,146,147,148,149];
+	
 	var shape_mod = [];
-	var arr_num   = 0;
 	var wall 	  = [];
+	
+	var _ID		  = 0;
+	var _num   	  = 0;
 	var _score    = 0;
 	var _speed    = 1000;
 	
-		function initGame() {
-			var _l = 0;
-			shape_mod = shape_all[0][0];
-			arr_num = 0;
+		function init() {
+		
+			var _l    = 0;
+			_num      = 0;
+			_ID 	  = Math.floor(Math.random() * 5);
+			shape_mod = shape_[_ID];
+
 			document.querySelector('.point').innerHTML = 'S : ' + _score;
-			
 			
 			if ( Number(_score) >= 500 ) {
 				_speed = 800;
@@ -165,7 +170,16 @@
 			} 
 			
 			document.querySelector('.point_l').innerHTML = 'L : ' + _l;
-			console.log('_speed = ' + _speed);
+			
+			if ( gameValidate(wall) == 0 ) {
+				finishGame();
+			} else {
+				drawShape();
+			}
+		}
+		
+		function finishGame() {
+			console.log('method finishGame()');
 		}
 	
 		function drawArea()
@@ -181,14 +195,13 @@
 			}
 			document.writeln("</table></span>");	
 			
-			initGame();
-			drawShape();			
+			init();
 		}
 		
 		function gameValidate(args) 
 		{
 			var j = 0;
-			<!-- console.log(shape_mod); -->
+
 			shape_mod.forEach( (item) => {
 
 				if ( args.findIndex ( (el) => el == item ) != -1 ) {
@@ -203,10 +216,9 @@
 		function drawShape() 
 		{			
 			
-			drawShapePaint(shape_mod);
+			drawShapePaint( shape_mod );
 			
-			<!-- if ( shape_mod[shape_mod.length - 1].toString().split('')[0] != '9') { -->
-			if ( gameValidate(down_wall) == 1 ) {
+			if ( gameValidate( down_wall ) == 1 ) {
 				
 				var i = 0;
 				var arr_vilidate = wall.map(item => Number(item) - 10);
@@ -219,68 +231,37 @@
 				
 				if ( i == 0 ) {			
 				
-				setTimeout( clearShape, _speed, shape_mod);	
+				setTimeout( clearShape, _speed, shape_mod );	
 				
-				oneDownShape(shape_mod);
+				oneDownShape( shape_mod );
 				
-				setTimeout( drawShape, _speed);
+				setTimeout( drawShape, _speed );
 					
 				} else {
-					wall = wall.concat(shape_mod);
-					initGame();
+					wall = wall.concat( shape_mod );
 					wall.sort( (a, b) => a - b );
-					if ( gameValidate(wall) == 0 ) {
-						<!-- console.log(shape_mod); -->
-						<!-- console.log(wall); -->
-						finishGame();
-					} else {
-						recurPoint(wall);
-						<!-- console.log(wall); -->
-						startGame();			
-					}
+					recurPoint( wall );
+					init();
 				}	
 
 			} else {
-				wall = wall.concat(shape_mod);
-				initGame();
+				wall = wall.concat( shape_mod );
 				wall.sort( (a, b) => a - b );
-				if ( gameValidate(wall) == 0 ) {
-					<!-- console.log(shape_mod); -->
-					<!-- console.log(wall); -->
-					finishGame();
-				} else {
-					recurPoint(wall);
-					<!-- console.log(wall); -->
-					startGame();			
-				}
-
-			}			
-			
-		}
-		
-
-		function startGame() {
-			
-			initGame();
-			<!-- shape_mod = shape_1; -->
-			drawShape();		
-		}
-		
-		function finishGame() {
-			console.log('method finishGame()');
+				recurPoint( wall );
+				init();
+			}	
 		}
 		
 		function recurPoint(arr) {
 
 			var tmp = [];
-			var mas = [];
 			var del = [];
-			var wall_foo = arr;
+			var box = arr;
 			var j = 0;
 			
-			for ( var i = 0; i < wall_foo.length; i++ ) {
+			for ( var i = 0; i < box.length; i++ ) {
 			
-				var m = wall_foo[i].toString().split('');
+				var m = box[i].toString().split('');
 
 				if ( m[m.length - 1] == j ) {
 				
@@ -291,7 +272,6 @@
 						 // извлечь начало массива и увеличиваем на 10
 						tmp = arr.splice(0, i - 9).map(item => Number(item) + 10);
 
-						//       console.log(mas);
 						//       console.log(tmp);      
 						//       console.log(arr);
 
@@ -308,9 +288,8 @@
 
 						drawShapePaint(wall);
 						
-						_score = _score + 100;
-						
-						initGame();
+						_score = _score + 10;
+
 						recurPoint(wall);
 					}
 				} 
@@ -339,52 +318,102 @@
 		}
 		
 		function oneLeftShape(shape) {
-			shape_mod = shape.map(item => Number(item) - 1);
+			var left_wall = [10,20,30,40,50,60,70,80,90,100,110,120,130,140];
+			var j = 0;
+			shape.forEach( (item) => {
+
+				if ( left_wall.findIndex ( (el) => el == item ) != -1 ) {
+					j++;
+				} 
+
+			});
+			if ( j == 0 ) {
+				shape_mod = shape.map(item => Number(item) - 1);
+			}
 		}
 		
 		function oneRightShape(shape) {
-			shape_mod = shape.map(item => Number(item) + 1);
+			var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149];
+			var j = 0;
+			shape.forEach( (item) => {
+
+				if ( right_wall.findIndex ( (el) => el == item ) != -1 ) {
+					j++;
+				} 
+
+			});
+			if ( j == 0 ) {
+				shape_mod = shape.map(item => Number(item) + 1);
+			}
 		}
 		
 		function oneDownShape(shape) {
 			shape_mod = shape.map(item => Number(item) + 10);
-			<!-- console.log(shape_mod); -->
 		}
 		
-		function rotateShape(arr, num) {
-			var tmp = [[arr[0], arr[1], arr[2], arr[3]],
-					   [arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3]],
-					   [arr[0], arr[1], arr[2], arr[3] - 9],
-					   [arr[0], arr[1] + 1, arr[2] + 1, arr[3] + 9]
-					  ];
-			num++;
+		function rotateShape(arr, _ID) {
+		
+			var top_wall = [10,11,12,13,14,15,16,17,18,19];
+			<!-- var top_wall = ['00','01','02','03','04','05','06','07','08','09']; -->
+			var j = 0;
 			
-			if ( num == 4 ) {
-				num = 0;
-				tmp = [[arr[0] + 9, arr[1], arr[2], arr[3]]
-					  ];
-			}
-			arr_num = num;
-			// console.log(num);
-			shape_mod = tmp[num];
-		}
+			arr.forEach( (item) => {
 
-		function rotateShape_1(arr, num) {
-			var tmp = [[arr[0], arr[1], arr[2], arr[3]],
-					   [arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3]],
-					   [arr[0], arr[1], arr[2], arr[3] - 9],
-					   [arr[0], arr[1] + 1, arr[2] + 1, arr[3] + 9]
-					  ];
-			num++;
+				if ( top_wall.findIndex ( (el) => el == item ) != -1 ) {
+					j++;
+				} 
+
+			});
 			
-			if ( num == 4 ) {
-				num = 0;
-				tmp = [[arr[0] + 9, arr[1], arr[2], arr[3]]
-					  ];
+			if ( j == 0 ) {
+				if ( _ID == 0 ) {
+					var tmp = [
+						[arr[0] + 9, arr[1], arr[2], arr[3]],				
+						[arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3]], 		
+						[arr[0], arr[1], arr[2], arr[3] - 9],			
+						[arr[0], arr[1] + 1, arr[2] + 1, arr[3] + 9] 	
+					];
+					
+					_num++;
+					if ( _num == 4 ) {
+						_num = 0;
+					}
+
+					shape_mod = tmp[_num];		
+					
+				} else if ( _ID == 1 ) {
+					var tmp = [
+						[arr[0] + 1, arr[1] + 10, arr[2] + 19, arr[3] + 28],
+						[arr[0] - 1, arr[1] - 10, arr[2] - 19, arr[3] - 28]
+					];
+					_num == 0 ? shape_mod = tmp[_num++] : shape_mod = tmp[_num--];		
+					
+				} else if ( _ID == 2 ) {
+					var tmp = [
+						[arr[0] - 2, arr[1] - 10, arr[2] - 1, arr[3] - 9],
+						[arr[0] + 2, arr[1] + 10, arr[2] + 1, arr[3] + 9],
+						
+					];
+					_num == 0 ? shape_mod = tmp[_num++] : shape_mod = tmp[_num--];	
+					
+				} else if ( _ID == 3 ) {
+					shape_mod = arr;
+				} else if ( _ID == 4 ) {
+					var tmp = [
+						[arr[0] + 1, arr[1] + 8, arr[2] - 1, arr[3] - 10],		
+						[arr[0] - 11, arr[1] - 9, arr[2], arr[3]], 					 
+						[arr[0] + 9, arr[1], arr[2] - 9, arr[3] - 2],				
+						[arr[0] + 1, arr[1] + 1, arr[2] + 10, arr[3] + 12] 	
+					];
+
+					_num++;
+					if ( _num == 4 ) {
+						_num = 0;
+					}
+
+					shape_mod = tmp[_num];
+				}		
 			}
-			arr_num = num;
-			// console.log(num);
-			shape_mod = tmp[num];
 		}
 		
 		drawArea();
@@ -401,16 +430,7 @@
 				
 			} else if (event.code == 'ArrowUp') {
 			
-				<!-- if ( shape_all[0][1] == 0 ) { -->
-					if ( gameValidate(up_wall) == 1 ) {
-						rotateShape(shape_mod, arr_num);
-					<!-- }				 -->
-				}
-				<!-- if ( shape_all[0][1] == 1 ) { -->
-					<!-- if ( gameValidate(up_wall) == 1 ) { -->
-						<!-- rotateShape_1(shape_mod, arr_num); -->
-					<!-- }				 -->
-				<!-- } -->
+				rotateShape(shape_mod, _ID);
 
 			} else if (event.code == 'ArrowDown') {
 			
