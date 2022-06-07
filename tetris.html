@@ -220,36 +220,29 @@
 			
 			if ( gameValidate( down_wall ) == 1 ) {
 				
-				var i = 0;
-				var arr_vilidate = wall.map(item => Number(item) - 10);
+				if ( gameValidate( wall.map(item => Number(item) - 10) ) == 1 ) {
 				
-				for ( val of shape_mod ) {
-					if ( arr_vilidate.includes(Number(val)) ) {	
-						i++;
-					}
-				}					
-				
-				if ( i == 0 ) {			
-				
-				setTimeout( clearShape, _speed, shape_mod );	
-				
-				oneDownShape( shape_mod );
-				
-				setTimeout( drawShape, _speed );
+					setTimeout( clearShape, _speed, shape_mod );	
 					
-				} else {
-					wall = wall.concat( shape_mod );
-					wall.sort( (a, b) => a - b );
-					recurPoint( wall );
-					init();
+					oneDownShape( shape_mod );
+					
+					setTimeout( drawShape, _speed );
+					
+				} 
+				else {
+					colovratiy();
 				}	
-
-			} else {
-				wall = wall.concat( shape_mod );
-				wall.sort( (a, b) => a - b );
-				recurPoint( wall );
-				init();
+			} 
+			else {
+				colovratiy();
 			}	
+		}
+		
+		function colovratiy() {
+			wall = wall.concat( shape_mod );
+			wall.sort( (a, b) => a - b );
+			recurPoint( wall );
+			init();		
 		}
 		
 		function recurPoint(arr) {
@@ -291,8 +284,9 @@
 						_score = _score + 10;
 
 						recurPoint(wall);
+						
 					}
-				} 
+				}
 			}
 			console.log(wall);
 		}
@@ -328,7 +322,9 @@
 
 			});
 			if ( j == 0 ) {
-				shape_mod = shape.map(item => Number(item) - 1);
+				if ( gameValidate( wall.map(item => Number(item) + 1) ) == 1 ) {
+					shape_mod = shape.map(item => Number(item) - 1);			
+				}
 			}
 		}
 		
@@ -343,12 +339,31 @@
 
 			});
 			if ( j == 0 ) {
-				shape_mod = shape.map(item => Number(item) + 1);
+				if ( gameValidate( wall.map(item => Number(item) - 1) ) == 1 ) {
+					shape_mod = shape.map(item => Number(item) + 1);
+				}
 			}
 		}
 		
 		function oneDownShape(shape) {
-			shape_mod = shape.map(item => Number(item) + 10);
+			<!-- var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149]; -->
+			<!-- var j = 0; -->
+			<!-- shape.forEach( (item) => { -->
+
+				<!-- if ( down_wall.findIndex ( (el) => el == item ) != -1 ) { -->
+					<!-- j++; -->
+				<!-- }  -->
+
+			<!-- }); -->
+			<!-- if ( j == 0 ) { -->
+				shape_mod = shape.map(item => Number(item) + 10);
+			<!-- } -->
+			<!-- } else { -->
+				<!-- wall = wall.concat( shape_mod ); -->
+				<!-- wall.sort( (a, b) => a - b ); -->
+				<!-- recurPoint( wall ); -->
+				<!-- init(); -->
+			<!-- }	 -->
 		}
 		
 		function rotateShape(arr, _ID) {
