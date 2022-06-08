@@ -255,42 +255,110 @@
 			for ( var i = 0; i < box.length; i++ ) {
 			
 				var m = box[i].toString().split('');
-
-				if ( m[m.length - 1] == j ) {
 				
-				    j++;
+				<!-- if (m.length == 3) { -->
 
-					if ( j == 10 ) {
-					
-						 // извлечь начало массива и увеличиваем на 10
-						tmp = arr.splice(0, i - 9).map(item => Number(item) + 10);
+					f = m[m.length - 2];
+					//     console.log('f - ' + m);
 
-						//       console.log(tmp);      
-						//       console.log(arr);
+					for ( var k = i; k < box.length; k++ ) {
 
-						del = arr.splice(0, 10);
-						//       console.log(del);
-						clearShape(del);
+						var m = box[k].toString().split('');
 
-						clearShape( tmp.map(item => Number(item) - 10) );
-						//       console.log(arr);
-						wall = tmp.concat(arr); // соединяем с остатками
+						//       console.log(m[m.length - 2] + m[m.length - 1]);
 
-						//       console.log(wall);
-						wall.sort( (a, b) => a - b );
+						if ( f == m[m.length - 2] && m[m.length - 1] == j ) {
 
-						drawShapePaint(wall);
-						
-						_score = _score + 10;
+							j++;
 
-						recurPoint(wall);
-						
+							if ( j == 10 ) {
+								<!-- console.log('j - ' + j); -->
+								 // извлечь начало массива и увеличиваем на 10
+								tmp = arr.splice(0, k - 9).map(item => Number(item) + 10);
+
+									   <!-- console.log('tmp - ' + tmp);       -->
+									   <!-- console.log('arr - ' + arr); -->
+
+								del = arr.splice(0, 10);
+									   <!-- console.log('del - ' + del); -->
+								clearShape(del);
+								
+								clearShape( tmp.map(item => Number(item) - 10) );
+								
+								// wall.splice(0, wall.length);
+									   <!-- console.log(arr); -->
+								wall = tmp.concat(arr); // соединяем с остатками
+
+									   <!-- console.log('wall - ' + wall); -->
+								wall.sort( (a, b) => a - b );
+
+								drawShapePaint(wall);
+								
+								_score = _score + 10;
+								
+								console.log('3 - ' + wall);
+								
+								recurPoint(wall);
+								
+								
+								k = box.length;
+								i = box.length;
+							}
+						} 
+						else {
+							j = 0;
+							break;
+						}	
 					}
-				}
+				<!-- }  -->
+				<!-- else { -->
+					<!-- if ( m[m.length - 1] == j ) { -->
+					
+						<!-- j++; -->
+
+						<!-- if ( j == 10 ) { -->
+							<!-- console.log('j - ' + j); -->
+							 <!-- // извлечь начало массива и увеличиваем на 10 -->
+							<!-- tmp = arr.splice(0, i - 9).map(item => Number(item) + 10); -->
+
+								   <!-- console.log('tmp - ' + tmp);       -->
+								   <!-- console.log('arr - ' + arr); -->
+
+							<!-- del = arr.splice(0, 10); -->
+								   <!-- console.log('del - ' + del); -->
+							<!-- clearShape(del); -->
+							
+							<!-- clearShape( tmp.map(item => Number(item) - 10) ); -->
+								   <!-- console.log(arr); -->
+							<!-- wall = tmp.concat(arr); // соединяем с остатками -->
+
+								   <!-- console.log('wall - ' + wall); -->
+							<!-- wall.sort( (a, b) => a - b ); -->
+
+							<!-- drawShapePaint(wall); -->
+							
+							<!-- _score = _score + 10; -->
+							
+							<!-- console.log('2 - ' + wall); -->
+							
+							<!-- recurPoint(wall); -->
+							
+						<!-- } -->
+					<!-- } -->
+				<!-- } -->
 			}
-			console.log(wall);
+			console.log('all - ' + wall);
 		}
 
+		function animated(del) {
+			setTimeout(clearShape, 100, del)
+			setTimeout(drawShapePaint, 100, del);
+			setTimeout(clearShape, 100, del)
+			setTimeout(drawShapePaint, 100, del);
+			setTimeout(clearShape, 100, del)
+			setTimeout(drawShapePaint, 100, del);
+			setTimeout(clearShape, 100, del)
+		}
 		
 		function drawShapePaint(shape) {
 			
@@ -448,6 +516,11 @@
 				rotateShape(shape_mod, _ID);
 
 			} else if (event.code == 'ArrowDown') {
+				
+				_speed = 10;
+				<!-- init(); -->
+				
+			} else if (event.code == 'Space') {
 			
 				_speed = 10;
 				
