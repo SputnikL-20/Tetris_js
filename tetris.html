@@ -22,7 +22,7 @@
 			position: relative;
 			font-family: "DS-Digital";
 		}
-		.point_l {
+		.level {
 			float: right;
 			position: relative;
 			font-family: "DS-Digital";
@@ -30,9 +30,14 @@
 		.display-area {
 			float: left;
 			position: absolute;	
-			top: 20px;
+			top: 0.6em;
 		}
-		
+		.window-area {
+			position: relative;
+			float: right;
+			top: 0.6em;
+			padding-left: 5em;
+		}		
         table{
             border-collapse: collapse;
             border-spacing: 0;
@@ -67,19 +72,27 @@
 		
         canvas{
 			font-size: 40%;
-
 			margin: 0 auto;
 			padding-left: 25%;
 			padding-bottom: 5%;
-			/* background:gray;
-            border: none;
-			cursor: crosshair; */
         }
 		#container {
+			position:relative;
 			padding: 10px;
 			width: 155px;
 			height: 220px;
 			border: 0.1px solid #cdcdcd;
+			z-index: 1;
+		}
+		#notefication {
+			position:fixed;
+			margin: auto;
+			/* padding-top: 85px; */
+			padding-left: 7px;
+			line-height: 5;
+			font-family: "DS-Digital";
+			color: red;
+			z-index: 2;
 		}
 		
     </style>
@@ -114,78 +127,131 @@
 <body>
 
 <div id="container">
+	<div id="notefication"></div>
 	<span class="point"></span>
 	<br />
-	<span class="point_l"></span>
+	<span class="level"></span>
+
 	<script>
 	
 	var shape_  = [
-					['04', '05', '06', '15'],
-					['03', '04', '05', '06'],		// Zu
-					['05', '14', '15', '24'],		// line
-					['04', '05', '14', '15'],		// куб
-				    ['06', '14', '15', '16']		// L
+					[14, 15, 16, 25],		// Member
+					[13, 14, 15, 16],		// line
+					[15, 24, 25, 34],		// Zuu
+					[14, 15, 24, 25],		// Rectangle
+				    [16, 24, 25, 26],		// L
+					[14, 15, 23, 24],		// Zuu revers
+					[14, 24, 25, 26]		// L revers
 				  ];
-				  
 	
-					
-	var down_wall = [140,141,142,143,144,145,146,147,148,149];
+	var down_wall = [180,181,182,183,184,185,186,187,188,189];
 	
 	var shape_mod = [];
 	var wall 	  = [];
-	
+	var future_ID;
 	var _ID		  = 0;
 	var _num   	  = 0;
 	var _score    = 0;
+	var _level    = 0;
 	var _speed    = 1000;
+	var timeoutId;
+	var intervalId;
 	
 		function init() {
-		
-			var _l    = 0;
-			_num      = 0;
-			_ID 	  = Math.floor(Math.random() * 5);
+			
+			_num = 0;
+			
+			clearShapeWindow( [13, 14, 15, 16, 23, 24, 25, 26, 34] );
+			
+			future_ID !== undefined ? _ID = future_ID : _ID = 0;
+
 			shape_mod = shape_[_ID];
 
 			document.querySelector('.point').innerHTML = 'S : ' + _score;
 			
 			if ( Number(_score) >= 500 ) {
 				_speed = 800;
-				_l = 1;
-				
+				_level = 1;
 			} 
 			if ( Number(_score) >= 1000 ) {
 				_speed = 600;
-				_l = 2;
+				_level = 2;
 			} 
 			if ( Number(_score) >= 1500 ) {
 				_speed = 500;
-				_l = 3;
+				_level = 3;
 			} 
 			if ( Number(_score) >= 2000 ) {
 				_speed = 400;
-				_l = 4;
+				_level = 4;
 			}
 			if ( Number(_score) < 500 ) {
 				_speed = 1000;
 			} 
 			
-			document.querySelector('.point_l').innerHTML = 'L : ' + _l;
+			document.querySelector('.level').innerHTML = 'L : ' + _level;
 			
 			if ( gameValidate(wall) == 0 ) {
-				finishGame();
+				finishGame( '<H1>GAME OVER</H1>' );
 			} else {
+				
 				drawShape();
+				future_ID = Math.floor(Math.random() * 7);
+				drawShapeWindow( shape_[future_ID] );
 			}
 		}
 		
-		function finishGame() {
+		function drawWindow()
+		{
+			document.writeln("<span class='window-area'><table>");		
+			for (var j = 0; j < 6; j++) {
+				document.writeln("<tr>");
+
+				for (var i = 2; i < 8; i++) {
+					document.writeln("<td id=" + j + "_" + i + "><canvas id='canva_w_" + j + "" + i + "' width='4' height='4'></canvas></td>");
+				}
+				document.writeln("</tr>");
+			}
+			document.writeln("</table></span>");	
+		}
+		
+		function drawShapeWindow( args ) {
+
+			for ( var i = 0; i < args.length; i++ ) {
+				var arg = args[i].toString().split('');
+				window.document.getElementById(arg[0] + '_' + arg[1]).style.backgroundColor = 'gray';
+				window.document.getElementById(arg[0] + '_' + arg[1]).style.borderColor = 'black';		
+				drawPast( 'canva_w_' + args[i] );	
+			}		
+		}
+		
+		function clearShapeWindow( args ) {
+
+			for ( var i = 0; i < args.length; i++ ) {
+				var arg = args[i].toString().split('');
+				document.getElementById(arg[0] + '_' + arg[1]).style.background = 'none';
+				document.getElementById(arg[0] + '_' + arg[1]).style.border = '0.1px solid #cdcdcd';	
+				drawPastClear( 'canva_w_' + args[i] );	
+			}		
+		}
+		
+		function finishGame(str) {
+			document.getElementById('notefication').innerHTML = str;
+			document.getElementById('container').style.backgroundColor = 'gray';
+			document.querySelector('.point').style.color = 'white';
 			console.log('method finishGame()');
+			
+			intervalId = setInterval(function(){
+				var a = document.getElementById('notefication').style.opacity || 1;
+				document.getElementById('notefication').style.opacity = ((parseInt(a)) ? 0 : 1);
+			}, 1e3);
+
 		}
 	
 		function drawArea()
 		{
 			document.writeln("<span class='display-area'><table>");		
-			for (var j = 0; j < 15; j++) {
+			for (var j = 1; j < 19; j++) {
 				document.writeln("<tr>");
 
 				for (var i = 0; i < 10; i++) {
@@ -195,6 +261,7 @@
 			}
 			document.writeln("</table></span>");	
 			
+			drawWindow();
 			init();
 		}
 		
@@ -226,7 +293,7 @@
 					
 					oneDownShape( shape_mod );
 					
-					setTimeout( drawShape, _speed );
+					timeoutId = setTimeout( drawShape, _speed );
 					
 				} 
 				else {
@@ -256,108 +323,59 @@
 			
 				var m = box[i].toString().split('');
 				
-				<!-- if (m.length == 3) { -->
+				f = m[m.length - 2];
+				//     console.log('f - ' + m);
 
-					f = m[m.length - 2];
-					//     console.log('f - ' + m);
+				for ( var k = i; k < box.length; k++ ) {
 
-					for ( var k = i; k < box.length; k++ ) {
+					var m = box[k].toString().split('');
 
-						var m = box[k].toString().split('');
+					//       console.log(m[m.length - 2] + m[m.length - 1]);
 
-						//       console.log(m[m.length - 2] + m[m.length - 1]);
+					if ( f == m[m.length - 2] && m[m.length - 1] == j ) {
 
-						if ( f == m[m.length - 2] && m[m.length - 1] == j ) {
+						j++;
 
-							j++;
-
-							if ( j == 10 ) {
-								<!-- console.log('j - ' + j); -->
-								 // извлечь начало массива и увеличиваем на 10
-								tmp = arr.splice(0, k - 9).map(item => Number(item) + 10);
-
-									   <!-- console.log('tmp - ' + tmp);       -->
-									   <!-- console.log('arr - ' + arr); -->
-
-								del = arr.splice(0, 10);
-									   <!-- console.log('del - ' + del); -->
-								clearShape(del);
-								
-								clearShape( tmp.map(item => Number(item) - 10) );
-								
-								// wall.splice(0, wall.length);
-									   <!-- console.log(arr); -->
-								wall = tmp.concat(arr); // соединяем с остатками
-
-									   <!-- console.log('wall - ' + wall); -->
-								wall.sort( (a, b) => a - b );
-
-								drawShapePaint(wall);
-								
-								_score = _score + 10;
-								
-								console.log('3 - ' + wall);
-								
-								recurPoint(wall);
-								
-								
-								k = box.length;
-								i = box.length;
-							}
-						} 
-						else {
-							j = 0;
-							break;
-						}	
-					}
-				<!-- }  -->
-				<!-- else { -->
-					<!-- if ( m[m.length - 1] == j ) { -->
-					
-						<!-- j++; -->
-
-						<!-- if ( j == 10 ) { -->
+						if ( j == 10 ) {
 							<!-- console.log('j - ' + j); -->
-							 <!-- // извлечь начало массива и увеличиваем на 10 -->
-							<!-- tmp = arr.splice(0, i - 9).map(item => Number(item) + 10); -->
+							 // извлечь начало массива и увеличиваем на 10
+							tmp = arr.splice(0, k - 9).map(item => Number(item) + 10);
 
 								   <!-- console.log('tmp - ' + tmp);       -->
 								   <!-- console.log('arr - ' + arr); -->
 
-							<!-- del = arr.splice(0, 10); -->
-								   <!-- console.log('del - ' + del); -->
-							<!-- clearShape(del); -->
+							del = arr.splice(0, 10);
 							
-							<!-- clearShape( tmp.map(item => Number(item) - 10) ); -->
+							console.log('point - ' + del);
+							
+							clearShape(del);
+							
+							clearShape( tmp.map(item => Number(item) - 10) );
+							
+							// wall.splice(0, wall.length);
 								   <!-- console.log(arr); -->
-							<!-- wall = tmp.concat(arr); // соединяем с остатками -->
+							wall = tmp.concat(arr); // соединяем с остатками
 
 								   <!-- console.log('wall - ' + wall); -->
-							<!-- wall.sort( (a, b) => a - b ); -->
+							wall.sort( (a, b) => a - b );
 
-							<!-- drawShapePaint(wall); -->
+							drawShapePaint(wall);
 							
-							<!-- _score = _score + 10; -->
-							
-							<!-- console.log('2 - ' + wall); -->
-							
-							<!-- recurPoint(wall); -->
-							
-						<!-- } -->
-					<!-- } -->
-				<!-- } -->
+							_score = _score + 10;
+
+							recurPoint(wall);
+	
+							k = box.length;
+							i = box.length;
+						}
+					} 
+					else {
+						j = 0;
+						break;
+					}	
+				}
 			}
 			console.log('all - ' + wall);
-		}
-
-		function animated(del) {
-			setTimeout(clearShape, 100, del)
-			setTimeout(drawShapePaint, 100, del);
-			setTimeout(clearShape, 100, del)
-			setTimeout(drawShapePaint, 100, del);
-			setTimeout(clearShape, 100, del)
-			setTimeout(drawShapePaint, 100, del);
-			setTimeout(clearShape, 100, del)
 		}
 		
 		function drawShapePaint(shape) {
@@ -367,7 +385,6 @@
 				document.getElementById(shape[i].toString()).style.borderColor = 'black'
 				drawPast( 'canva_' + shape[i] );	
 			}
-			
 		}
 		
 		function clearShape(shape) {
@@ -380,7 +397,7 @@
 		}
 		
 		function oneLeftShape(shape) {
-			var left_wall = [10,20,30,40,50,60,70,80,90,100,110,120,130,140];
+			var left_wall = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180];
 			var j = 0;
 			shape.forEach( (item) => {
 
@@ -397,7 +414,7 @@
 		}
 		
 		function oneRightShape(shape) {
-			var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149];
+			var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149,159,169,179,189];
 			var j = 0;
 			shape.forEach( (item) => {
 
@@ -414,47 +431,32 @@
 		}
 		
 		function oneDownShape(shape) {
-			<!-- var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149]; -->
-			<!-- var j = 0; -->
-			<!-- shape.forEach( (item) => { -->
 
-				<!-- if ( down_wall.findIndex ( (el) => el == item ) != -1 ) { -->
-					<!-- j++; -->
-				<!-- }  -->
-
-			<!-- }); -->
-			<!-- if ( j == 0 ) { -->
 				shape_mod = shape.map(item => Number(item) + 10);
-			<!-- } -->
-			<!-- } else { -->
-				<!-- wall = wall.concat( shape_mod ); -->
-				<!-- wall.sort( (a, b) => a - b ); -->
-				<!-- recurPoint( wall ); -->
-				<!-- init(); -->
-			<!-- }	 -->
+				
 		}
 		
 		function rotateShape(arr, _ID) {
 		
-			var top_wall = [10,11,12,13,14,15,16,17,18,19];
 			<!-- var top_wall = ['00','01','02','03','04','05','06','07','08','09']; -->
-			var j = 0;
+			<!-- var j = 0; -->
 			
-			arr.forEach( (item) => {
+			<!-- arr.forEach( (item) => { -->
 
-				if ( top_wall.findIndex ( (el) => el == item ) != -1 ) {
-					j++;
-				} 
+				<!-- if ( top_wall.findIndex ( (el) => el == item ) != -1 ) { -->
+					<!-- j++; -->
+				<!-- }  -->
 
-			});
+			<!-- }); -->
 			
-			if ( j == 0 ) {
-				if ( _ID == 0 ) {
+			<!-- if ( j == 0 ) { -->
+			
+				if ( _ID == 0 ) { // Member
 					var tmp = [
-						[arr[0] + 9, arr[1], arr[2], arr[3]],				
-						[arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3]], 		
-						[arr[0], arr[1], arr[2], arr[3] - 9],			
-						[arr[0], arr[1] + 1, arr[2] + 1, arr[3] + 9] 	
+						[arr[0] + 9, arr[1] + 0, arr[2] + 0, arr[3] + 0],				
+						[arr[0] - 9, arr[1] - 1, arr[2] - 1, arr[3] + 0], 		
+						[arr[0] + 0, arr[1] + 0, arr[2] + 0, arr[3] - 9],			
+						[arr[0] + 0, arr[1] + 1, arr[2] + 1, arr[3] + 9] 	
 					];
 					
 					_num++;
@@ -462,31 +464,33 @@
 						_num = 0;
 					}
 
-					shape_mod = tmp[_num];		
-					
-				} else if ( _ID == 1 ) {
+					shape_mod = tmp[_num];			
+				} 
+				else if ( _ID == 1 ) {  // line
 					var tmp = [
 						[arr[0] + 1, arr[1] + 10, arr[2] + 19, arr[3] + 28],
 						[arr[0] - 1, arr[1] - 10, arr[2] - 19, arr[3] - 28]
 					];
 					_num == 0 ? shape_mod = tmp[_num++] : shape_mod = tmp[_num--];		
 					
-				} else if ( _ID == 2 ) {
+				} 
+				else if ( _ID == 2 ) { // Zuu
 					var tmp = [
 						[arr[0] - 2, arr[1] - 10, arr[2] - 1, arr[3] - 9],
 						[arr[0] + 2, arr[1] + 10, arr[2] + 1, arr[3] + 9],
 						
 					];
 					_num == 0 ? shape_mod = tmp[_num++] : shape_mod = tmp[_num--];	
-					
-				} else if ( _ID == 3 ) {
+				} 
+				else if ( _ID == 3 ) { // Rectangle
 					shape_mod = arr;
-				} else if ( _ID == 4 ) {
+				} 
+				else if ( _ID == 4 ) { // L
 					var tmp = [
-						[arr[0] + 1, arr[1] + 8, arr[2] - 1, arr[3] - 10],		
-						[arr[0] - 11, arr[1] - 9, arr[2], arr[3]], 					 
-						[arr[0] + 9, arr[1], arr[2] - 9, arr[3] - 2],				
-						[arr[0] + 1, arr[1] + 1, arr[2] + 10, arr[3] + 12] 	
+						[arr[0] +  2, arr[1] +  9, arr[2] +  0, arr[3] -  9],		
+						[arr[0] -  1, arr[1] +  1, arr[2] + 10, arr[3] + 10], 					 
+						[arr[0] +  9, arr[1] +  0, arr[2] -  9, arr[3] -  2],				
+						[arr[0] - 10, arr[1] - 10, arr[2] -  1, arr[3] +  1] 	
 					];
 
 					_num++;
@@ -495,8 +499,35 @@
 					}
 
 					shape_mod = tmp[_num];
-				}		
-			}
+				} 
+				else if ( _ID == 5 ) { // Zuu revers
+					if ( gameValidate( [10,11,12,13,14,15,16,17,18,19] ) == 1 ) {
+						var tmp = [
+							[arr[0] - 11, arr[1] - 2, arr[2] - 9, arr[3]],
+							[arr[0] + 11, arr[1] + 2, arr[2] + 9, arr[3]]
+							
+							
+						];
+						_num == 0 ? shape_mod = tmp[_num++] : shape_mod = tmp[_num--];	
+					}
+				} 
+				else if ( _ID == 6 ) { // L revers
+					var tmp = [
+						[arr[0] - 1, arr[1] - 1, arr[2] - 9, arr[3] - 9],		
+						[arr[0] + 1, arr[1] - 8, arr[2] + 0, arr[3] + 9], 					 
+						[arr[0] + 9, arr[1] + 9, arr[2] + 1, arr[3] + 1],				
+						[arr[0] - 9, arr[1] + 0, arr[2] + 8, arr[3] - 1] 	
+					];
+					
+					_num++;
+					if ( _num == 4 ) {
+						_num = 0;
+					}
+					<!-- console.log('_num = ' + _num + ' arr = ' + tmp[_num]); -->
+					shape_mod = tmp[_num];
+				}
+	
+			<!-- } -->
 		}
 		
 		drawArea();
@@ -507,28 +538,38 @@
 			
 				oneLeftShape(shape_mod);
 				
-			} else if (event.code == 'ArrowRight') {
+			} 
+			else if (event.code == 'ArrowRight') {
 			
 				oneRightShape(shape_mod);
 				
-			} else if (event.code == 'ArrowUp') {
+			} 
+			else if (event.code == 'ArrowUp') {
 			
 				rotateShape(shape_mod, _ID);
 
-			} else if (event.code == 'ArrowDown') {
+			} 
+			else if (event.code == 'ArrowDown') {
 				
 				_speed = 10;
-				<!-- init(); -->
 				
-			} else if (event.code == 'Space') {
-			
-				_speed = 10;
-				
+			} 
+			else if (event.code == 'Space') {
+				if ( timeoutId !== undefined ) {
+					clearTimeout(timeoutId);
+					finishGame( '<h1>PAUSE</h1>' );
+					timeoutId = undefined;
+				} else {
+					clearInterval( intervalId );
+					document.getElementById('container').style.backgroundColor = 'white';
+					document.getElementById('notefication').innerHTML = '';
+					document.querySelector('.point').style.color = 'black';
+					setTimeout( drawShape, _speed );
+				}
 			}
 		});	
 		
 	</script>
-	
 </div>
 
 
