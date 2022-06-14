@@ -1,0 +1,119 @@
+		@font-face {
+			font-family: "DS-Digital";
+			src: url("../fonts/DS-DIGIB.TTF");
+		}
+
+		.point {
+			float: right;
+			position: relative;
+			font-family: "DS-Digital";
+		}
+		.level {
+			float: right;
+			position: relative;
+			font-family: "DS-Digital";
+		}
+		.display-area {
+			position: absolute;
+			float: left;	
+			top:10px;
+		}
+		.window-area {
+			position: fixed;
+			top:60px;
+			margin-left:110px;
+		}		
+        table{
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        th, td {
+			width: 8px;
+			height: 8px;
+			font-size: 40%;
+            padding: 0;
+			margin: 0;
+            border: 0.1px solid #cdcdcd;
+			cursor: default;
+        }
+		
+		span:focus { 
+			text-indent: -9999em; 
+		}
+	    span:focus {
+			outline : none;
+		}
+		span:focus {
+			outline: none;
+			box-shadow: 0 0 1px 1px #4d90f0;
+		}
+		span:focus::-moz-placeholder {
+			color: transparent;
+		}
+		span:focus::-webkit-input-placeholder {
+			color: transparent;
+		}
+		
+        canvas{
+			font-size: 40%;
+			margin: 0 auto;
+			padding-left: 25%;
+			padding-bottom: 5%;
+        }
+		#container {
+			position:relative;
+			padding: 10px;
+			width: 155px;
+			height: 250px;
+			border: 0.1px solid #cdcdcd;
+			z-index: 1;
+		}
+		#notefication {
+			position:fixed;
+			margin: auto;
+			/* padding-top: 85px; */
+			padding-left: 7px;
+			line-height: 5;
+			font-family: "DS-Digital";
+			color: red;
+			z-index: 2;
+		}
+
+		button {
+			background: #4CAF50; /* Цвет фона */
+			/* border: 1px solid #7a7b7e; Параметры рамки */
+			width: 40px; /* Ширина кнопки */
+			height: 30px; /* Высота */
+			border-radius: 50%;
+			display: inline-block;
+			text-decoration: none;
+			border: none;
+			color: white;
+		}
+		
+		.rotate {
+			padding: 25px;
+		}
+		
+		#comunication {
+			position: relative;
+			top: 9em;
+		}
+		#left {
+			position: relative;
+			top: 1em;
+		}
+		.right {
+			margin-left:10px;		
+		}
+		#down {
+			position: relative;
+			top: 1.5em;		
+			margin-left:27px;			
+		}
+		#rotate {
+			position: absolute;
+			top: 1.8em;
+			margin-left: 103px;
+		}
