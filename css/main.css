@@ -1,8 +1,8 @@
+
 		@font-face {
 			font-family: "DS-Digital";
 			src: url("../fonts/DS-DIGIB.TTF");
 		}
-
 		.point {
 			float: right;
 			position: relative;
@@ -27,7 +27,6 @@
             border-collapse: collapse;
             border-spacing: 0;
         }
-
         th, td {
 			width: 8px;
 			height: 8px;
@@ -71,30 +70,45 @@
 		}
 		#notefication {
 			position:fixed;
-			margin: auto;
+			top: 6.5em;
+			/* margin: auto; */
 			/* padding-top: 85px; */
 			padding-left: 7px;
-			line-height: 5;
+			/* line-height: 5; */
 			font-family: "DS-Digital";
 			color: red;
 			z-index: 2;
 		}
-
-		button {
+		h1 {
+			margin: 0 auto;
+			padding-bottom: 0px;
+		}
+		.button {
 			background: #4CAF50; /* Цвет фона */
 			/* border: 1px solid #7a7b7e; Параметры рамки */
 			width: 40px; /* Ширина кнопки */
 			height: 30px; /* Высота */
 			border-radius: 50%;
 			display: inline-block;
+			border: none;
 			text-decoration: none;
 			border: none;
 			color: white;
 		}
-		
-		.rotate {
-			padding: 25px;
-		}
+		.button:hover {
+			border: none;
+			text-decoration: none;
+			/* cursor: pointer; */
+		}	
+		.button:active {
+			border: none;
+			text-decoration: none;
+			background: #F0E68C;
+		}	
+	    .button:focus {
+			border: none;
+			text-decoration: none;
+		}	
 		
 		#comunication {
 			position: relative;
@@ -115,5 +129,43 @@
 		#rotate {
 			position: absolute;
 			top: 1.8em;
-			margin-left: 103px;
+			margin-left: 109.5px;
 		}
+		.rotate {
+			padding: 24px;
+		}
+		.stop {
+		position: fixed;
+		top: 140px;
+		margin-left: 110px;
+		background: red;
+		width: 47px; /* Ширина кнопки */
+		height: 20px; /* Высота */
+		border-radius: 15%;
+		font-size: 75%;
+		font-family: "DS-Digital";
+		}
+
+.clean-label {
+  background-color: gray;
+  color: #29abe2;
+  border: none;
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+.clean-label:active {
+  border: none;
+  text-decoration: none;
+  color: red;
+}
+
+.clean-label:hover {
+  border: none;
+  text-decoration: none;
+}
+
+.clean-label:focus {
+  border: none;
+  text-decoration: none;
+}

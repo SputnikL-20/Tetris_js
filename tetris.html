@@ -2,19 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- <link href="./fonts/7fonts.ru_DS-DIGI.TTF"> -->
-	<!-- <link type="font/ttf" href="./fonts/362_LCDNOVA.ttf" rel="font/ttf"> -->
 	<link href="./css/main.css" rel="stylesheet">
 	<script src="./js/main.js"></script>
     <title>Document</title>
-
-    <style>
-
-
-		
-    </style>
 </head>
 <body>
 
@@ -24,13 +17,16 @@
 	<br />
 	<span class="level"></span>
 	<script> drawArea(); </script>
+	<span class="pause">
+		<button class="button stop" onclick="pauseResume()">PAUSE</button>
+	</span>
 	<div id="comunication">
 		<div id="left">
-			<button class="button left" onclick="oneLeftShape(shape_mod)">L</button>
-			<button class="button right" onclick="oneRightShape(shape_mod)">R</button>
+			<button class="button left" onclick="oneLeftShape(shape_mod)"></button>
+			<button class="button right" onclick="oneRightShape(shape_mod)"></button>
 		</div>
 		<div id="down">
-			<button class="button down" onclick="_speed = 10">D</button>
+			<button class="button down" onclick="_speed = 10"></button>
 		</div>
 		<div id="rotate">
 			<button class="button rotate" onclick="rotateShape(shape_mod, _ID)"></button>

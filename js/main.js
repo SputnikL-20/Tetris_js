@@ -124,35 +124,50 @@
 			}		
 		}
 
-	function drawPast( id_canvas ) {
-		var canvas = document.getElementById( id_canvas );
-		try {
-			if (canvas.getContext) {
-				var ctx = canvas.getContext('2d');
-				ctx.fillRect(0, 0, 8, 8);
-			}		
-		} catch (e) {
-			null;
+		function drawPast( id_canvas ) {
+			var canvas = document.getElementById( id_canvas );
+			try {
+				if (canvas.getContext) {
+					var ctx = canvas.getContext('2d');
+					ctx.fillRect(0, 0, 8, 8);
+				}		
+			} catch (e) {
+				null;
+			}
 		}
-	}
-	
-	function drawPastClear( id_canvas ) {
-		var canvas = document.getElementById( id_canvas );
-		try {
-			if (canvas.getContext) {
-				var ctx = canvas.getContext('2d');
-				ctx.clearRect(0, 0, 8, 8);
-			}		
-		} catch (e) {
-			null;
+		
+		function drawPastClear( id_canvas ) {
+			var canvas = document.getElementById( id_canvas );
+			try {
+				if (canvas.getContext) {
+					var ctx = canvas.getContext('2d');
+					ctx.clearRect(0, 0, 8, 8);
+				}		
+			} catch (e) {
+				null;
+			}
 		}
-	}
 		
 		function finishGame(str) {
+			
+			var btn = document.getElementsByTagName('button');
+			
+			if ( str == '<H1>GAME OVER</H1>' ) {
+				for ( var i = 0; i < btn.length; i++ ) {
+					btn[i].disabled = true;
+					btn[i].style.background = '#cdcdcd';
+				}				
+			} else if ( str == '<H1>PAUSE</H1>' ) {
+				for ( var i = 1; i < btn.length; i++ ) {
+					btn[i].disabled = true;
+				}				
+			}
+
 			document.getElementById('notefication').innerHTML = str;
+			document.querySelector('.stop').innerHTML = 'RESUME';
 			document.getElementById('container').style.backgroundColor = 'gray';
 			document.querySelector('.point').style.color = 'white';
-			console.log('method finishGame()');
+			// console.log('method finishGame()');
 			
 			intervalId = setInterval(function(){
 				var a = document.getElementById('notefication').style.opacity || 1;
@@ -257,32 +272,35 @@
 						j++;
 
 						if ( j == 10 ) {
-							<!-- console.log('j - ' + j); -->
-							 // извлечь начало массива и увеличиваем на 10
+							// извлечь начало массива и увеличиваем на 10
 							tmp = arr.splice(0, k - 9).map(item => Number(item) + 10);
 
-								   <!-- console.log('tmp - ' + tmp);       -->
-								   <!-- console.log('arr - ' + arr); -->
+							// console.log('tmp - ' + tmp);
+							// console.log('arr - ' + arr);
 
 							del = arr.splice(0, 10);
 							
-							<!-- console.log('point - ' + del); -->
+							// console.log('point - ' + del);
 							
-							clearShape(del);
+							fireWall( del, 0 );
 							
-							clearShape( tmp.map(item => Number(item) - 10) );
-							
-								   <!-- console.log(arr); -->
+							// setTimeout( clearShape, 400, del );
+							// console.log('tmp - ' + tmp);
+
+							setTimeout( clearShape, 325, tmp.map(item => Number(item) - 10) );
+							// console.log('tmp - ' + tmp);
+							// console.log(arr);
+
 							wall = tmp.concat(arr); // соединяем с остатками
 
-								   <!-- console.log('wall - ' + wall); -->
+							// console.log('wall - ' + wall);
 							wall.sort( (a, b) => a - b );
 
-							drawShapePaint(wall);
-							
-							_score = _score + 10;
+							setTimeout( drawShapePaint, 325, wall );
 
-							recurPoint(wall);
+							_score = _score + 10;
+							
+							setTimeout( recurPoint, 325, wall );
 	
 							k = box.length;
 							i = box.length;
@@ -294,7 +312,15 @@
 					}	
 				}
 			}
-			<!-- console.log('all - ' + wall); -->
+		}
+		
+		function fireWall( arg, i ) {
+
+			if ( i !== 5) {
+				i !== 0 ? drawShapePaint( arg ) : null;
+				setTimeout( clearShape, 25, arg );
+				setTimeout( fireWall, 50, arg, ++i );
+			}
 		}
 		
 		function drawShapePaint(shape) {
@@ -353,10 +379,7 @@
 
 				shape_mod = shape.map(item => Number(item) + 10);
 				
-		}
-		
-
-		
+		}	
 		
 		function rotateShape(arr, _ID) {
 			
@@ -573,13 +596,35 @@
 			}
 		}
 		
-
+		function pauseResume() {
+			
+			var btn = document.getElementsByTagName('button');
+			
+			if ( timeoutId !== undefined ) {
+				clearTimeout(timeoutId);
+				finishGame( '<H1>PAUSE</H1>' );
+				timeoutId = undefined;
+			}  
+			else {
+				clearInterval( intervalId );
+				document.getElementById('container').style.backgroundColor = 'white';
+				document.getElementById('notefication').innerHTML = '';
+				document.querySelector('.point').style.color = 'black';
+				document.querySelector('.stop').innerHTML = 'PAUSE';
+			
+				for ( var i = 1; i < btn.length; i++ ) {
+					btn[i].disabled = false;
+				}				
+				setTimeout( drawShape, _speed );
+			}
+		}
 		
 		document.addEventListener('keydown', function(event) 
 		{
 			if (event.code == 'ArrowLeft') {
-			
+				
 				oneLeftShape(shape_mod);
+				
 			} 
 			else if (event.code == 'ArrowRight') {
 			
@@ -594,16 +639,6 @@
 				_speed = 10;
 			} 
 			else if (event.code == 'Space') {
-				if ( timeoutId !== undefined ) {
-					clearTimeout(timeoutId);
-					finishGame( '<h1>PAUSE</h1>' );
-					timeoutId = undefined;
-				} else {
-					clearInterval( intervalId );
-					document.getElementById('container').style.backgroundColor = 'white';
-					document.getElementById('notefication').innerHTML = '';
-					document.querySelector('.point').style.color = 'black';
-					setTimeout( drawShape, _speed );
-				}
+				pauseResume();
 			}
 		});	
