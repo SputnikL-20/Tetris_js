@@ -13,17 +13,20 @@
 
 <div id="container">
 	<div id="notefication"></div>
-	<span class="point"></span>
-	<br />
-	<span class="level"></span>
+	<div class="point"></div>
+	<div class="level"></div>
+	<div id="watch">
+		<span id="hour">00</span>:<span id="min">00</span><span id="timer">:</span><span id="sec">00</span>
+	</div>
 	<script> drawArea(); </script>
+
 	<span class="pause">
 		<button class="button stop" onclick="pauseResume()">PAUSE</button>
 	</span>
 	<div id="comunication">
 		<div id="left">
-			<button class="button left" onclick="oneLeftShape(shape_mod)"></button>
-			<button class="button right" onclick="oneRightShape(shape_mod)"></button>
+			<button class="button left" value="left" id="left_btn"></button>
+			<button class="button right" value="right" id="right_btn"></button>
 		</div>
 		<div id="down">
 			<button class="button down" onclick="_speed = 10"></button>
@@ -34,6 +37,66 @@
 	</div>
 </div>
 
+
+    <script>
+
+      // Fake Constants
+      var INITIAL_TIME = 150;
+      <!-- var ACCELERATION = .9; -->
+      <!-- var MIN_TIME = 50; -->
+
+      // create global variables to hold DOM objects, and timer
+      var left = null,
+        right = null,
+        <!-- count = null, -->
+        timer = null;
+
+      // Increment the counter
+      function increment (time) {
+        // decrease timeout by our acceleration factor, unless it's at the minimum
+        <!-- time = (time * ACCELERATION > MIN_TIME) ? (time * ACCELERATION) : MIN_TIME; -->
+        oneLeftShape(shape_mod);
+        // set the timeout for the next round, and pass in the new smaller timeout
+        timer = setTimeout(
+                  function () {
+                    increment(time);
+                  }, time);
+      }
+      // Same as increment only subtracts one instead of adding.
+      // -- could easily make one function and pass an pos/neg factor instead
+      function decrement (time) {
+        <!-- time = time * ACCELERATION > MIN_TIME ? (time * ACCELERATION) : MIN_TIME; -->
+        oneRightShape(shape_mod);
+        timer = setTimeout(
+                  function () {
+                    decrement(time);
+                  }, time);
+     }
+
+     // Initialize the page after all the forms load
+     window.onload = function () {
+       // initialization function
+
+       // assign DOM objects to our vars for ease of use.
+       left = document.getElementById('left_btn');
+       right = document.getElementById('right_btn');
+       <!-- count = document.getElementById('count'); -->
+
+       // create event handlers for mouse up and down
+        left.onmousedown = function () {
+         increment(INITIAL_TIME);
+       }
+        right.onmousedown = function () {
+         decrement(INITIAL_TIME);
+       }
+
+       document.onmouseup = function () {
+         clearTimeout(timer);
+       }
+
+     }
+
+  </script>
 
 
 </body>

@@ -9,9 +9,9 @@
 						[14, 24, 25, 26]		// L revers
 				     ];
 	
-	var left_wall  = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180];
-	var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149,159,169,179,189];
-	var down_wall  = [180,181,182,183,184,185,186,187,188,189];
+	var left_wall  = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200];
+	var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149,159,169,179,189,199,209];
+	var down_wall  = [200,201,202,203,204,205,206,207,208,209];
 	
 	var shape_mod  = [];
 	var wall 	   = [];
@@ -23,6 +23,10 @@
 	var _speed     = 1000;
 	var timeoutId;
 	var intervalId;
+	var intervalIdTimer = setInterval ( stopwatch, 5e2 );
+	var sec   = 0;
+	var min   = 0;
+	var hour  = 0;
 	
 		function init() {
 			
@@ -75,12 +79,12 @@
 
 		function drawArea()
 		{
-			document.writeln("<span class='display-area'><table>");		
-			for (var j = 1; j < 19; j++) {
+			document.writeln("<span class='display-area'><table class='td-border'>");		
+			for (var j = 1; j < 21; j++) {
 				document.writeln("<tr>");
 
 				for (var i = 0; i < 10; i++) {
-					document.writeln("<td id=" + j + "" + i + "><canvas id='canva_" + j + "" + i + "' width='4' height='4'></canvas></td>");
+					document.writeln("<td class='td-border' id=" + j + "" + i + "><canvas id='canva_" + j + "" + i + "' width='4' height='4'></canvas></td>");
 				}
 				document.writeln("</tr>");
 			}
@@ -108,8 +112,8 @@
 
 			for ( var i = 0; i < args.length; i++ ) {
 				var arg = args[i].toString().split('');
-				window.document.getElementById(arg[0] + '_' + arg[1]).style.backgroundColor = 'gray';
-				window.document.getElementById(arg[0] + '_' + arg[1]).style.borderColor = 'black';		
+				document.getElementById(arg[0] + '_' + arg[1]).style.backgroundColor = 'gray';
+				document.getElementById(arg[0] + '_' + arg[1]).style.border = '0.1px solid black';	
 				drawPast( 'canva_w_' + args[i] );	
 			}		
 		}
@@ -119,7 +123,7 @@
 			for ( var i = 0; i < args.length; i++ ) {
 				var arg = args[i].toString().split('');
 				document.getElementById(arg[0] + '_' + arg[1]).style.background = 'none';
-				document.getElementById(arg[0] + '_' + arg[1]).style.border = '0.1px solid #cdcdcd';	
+				document.getElementById(arg[0] + '_' + arg[1]).style.border = 'none';	
 				drawPastClear( 'canva_w_' + args[i] );	
 			}		
 		}
@@ -149,15 +153,18 @@
 		}
 		
 		function finishGame(str) {
-			
+
 			var btn = document.getElementsByTagName('button');
-			
-			if ( str == '<H1>GAME OVER</H1>' ) {
+
+			if ( str === '<H1>GAME OVER</H1>' ) {
+				
 				for ( var i = 0; i < btn.length; i++ ) {
 					btn[i].disabled = true;
 					btn[i].style.background = '#cdcdcd';
-				}				
-			} else if ( str == '<H1>PAUSE</H1>' ) {
+				}
+				clearInterval(intervalIdTimer);
+			} 
+			else if ( str == '<H1>PAUSE</H1>' ) {
 				for ( var i = 1; i < btn.length; i++ ) {
 					btn[i].disabled = true;
 				}				
@@ -173,7 +180,6 @@
 				var a = document.getElementById('notefication').style.opacity || 1;
 				document.getElementById('notefication').style.opacity = ((parseInt(a)) ? 0 : 1);
 			}, 1e3);
-
 		}
 		
 		function gameValidate(args) 
@@ -342,7 +348,7 @@
 		}
 		
 		function oneLeftShape(shape) {
-			<!-- var left_wall = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180]; -->
+
 			var j = 0;
 			shape.forEach( (item) => {
 
@@ -359,7 +365,7 @@
 		}
 		
 		function oneRightShape(shape) {
-			<!-- var right_wall = [19,29,39,49,59,69,79,89,99,109,119,129,139,149,159,169,179,189]; -->
+
 			var j = 0;
 			shape.forEach( (item) => {
 
@@ -597,26 +603,61 @@
 		}
 		
 		function pauseResume() {
-			
+
 			var btn = document.getElementsByTagName('button');
-			
+
 			if ( timeoutId !== undefined ) {
 				clearTimeout(timeoutId);
 				finishGame( '<H1>PAUSE</H1>' );
 				timeoutId = undefined;
-			}  
+				
+				clearInterval( intervalIdTimer );
+				intervalIdTimer = undefined;
+			} 
 			else {
 				clearInterval( intervalId );
 				document.getElementById('container').style.backgroundColor = 'white';
 				document.getElementById('notefication').innerHTML = '';
 				document.querySelector('.point').style.color = 'black';
 				document.querySelector('.stop').innerHTML = 'PAUSE';
-			
+
 				for ( var i = 1; i < btn.length; i++ ) {
 					btn[i].disabled = false;
-				}				
+				}
+
 				setTimeout( drawShape, _speed );
+				intervalIdTimer = setInterval ( stopwatch, 5e2 );
 			}
+		}
+
+		function stopwatch() {
+
+			var timer = document.getElementById('timer');
+			var a 	  = timer.style.opacity || 1;
+			timer.style.opacity = ((parseInt(a)) ? 0 : 1);
+			
+			if ( timer.style.opacity == 1 ) {
+
+				sec = watch( 'sec', sec );
+				
+				if ( sec == '00' ) {
+
+					min = watch( 'min', min );
+					
+					if ( min == '00' ) {
+					
+						hour = watch( 'hour', hour );	
+						
+					}
+				}
+			}
+		}
+		
+		function watch( str, data ) {
+			Number(data) == 59 ? data = '00' : Number(++data);
+			data.toString().length == 1 ? data = "0" + data : data;
+			document.getElementById(str).innerHTML = data;
+			return data; 		
 		}
 		
 		document.addEventListener('keydown', function(event) 

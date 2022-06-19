@@ -6,11 +6,13 @@
 		.point {
 			float: right;
 			position: relative;
+			clear: both;
 			font-family: "DS-Digital";
 		}
 		.level {
 			float: right;
 			position: relative;
+			clear: both;
 			font-family: "DS-Digital";
 		}
 		.display-area {
@@ -20,7 +22,7 @@
 		}
 		.window-area {
 			position: fixed;
-			top:60px;
+			top:77px;
 			margin-left:110px;
 		}		
         table{
@@ -33,9 +35,11 @@
 			font-size: 40%;
             padding: 0;
 			margin: 0;
-            border: 0.1px solid #cdcdcd;
 			cursor: default;
         }
+		.td-border {
+			border: 0.1px solid #cdcdcd;
+		}
 		
 		span:focus { 
 			text-indent: -9999em; 
@@ -64,7 +68,7 @@
 			position:relative;
 			padding: 10px;
 			width: 155px;
-			height: 250px;
+			height: 270px;
 			border: 0.1px solid #cdcdcd;
 			z-index: 1;
 		}
@@ -112,7 +116,8 @@
 		
 		#comunication {
 			position: relative;
-			top: 9em;
+			top: 11.3em;
+			height: 87px;
 		}
 		#left {
 			position: relative;
@@ -144,6 +149,12 @@
 		border-radius: 15%;
 		font-size: 75%;
 		font-family: "DS-Digital";
+		}
+		#watch {
+			float: right;
+			position: relative;
+			clear: both;
+			font-family: "DS-Digital";
 		}
 
 .clean-label {
