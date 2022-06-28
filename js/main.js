@@ -79,16 +79,16 @@
 
 		function drawArea()
 		{
-			document.writeln("<span class='display-area'><table class='td-border'>");		
+			document.writeln("<div class='display-area'><table><tbody>");		
 			for (var j = 1; j < 21; j++) {
 				document.writeln("<tr>");
 
 				for (var i = 0; i < 10; i++) {
-					document.writeln("<td class='td-border' id=" + j + "" + i + "><canvas id='canva_" + j + "" + i + "' width='4' height='4'></canvas></td>");
+					document.writeln("<td class='td-border' id=" + j + "" + i + "><canvas id='canva_" + j + "" + i + "' width='20' height='20'></canvas></td>");
 				}
 				document.writeln("</tr>");
 			}
-			document.writeln("</table></span>");	
+			document.writeln("</tbody></table></div>");	
 			
 			drawWindow();
 			init();
@@ -96,16 +96,58 @@
 		
 		function drawWindow()
 		{
-			document.writeln("<span class='window-area'><table>");		
+			document.writeln("<div class='window-area'><table><tbody>");		
 			for (var j = 0; j < 5; j++) {
 				document.writeln("<tr>");
 
 				for (var i = 3; i < 8; i++) {
-					document.writeln("<td id=" + j + "_" + i + "><canvas id='canva_w_" + j + "" + i + "' width='4' height='4'></canvas></td>");
+					document.writeln("<td id=" + j + "_" + i + "><canvas id='canva_w_" + j + "" + i + "' width='20' height='20'></canvas></td>");
 				}
 				document.writeln("</tr>");
 			}
-			document.writeln("</table></span>");	
+			document.writeln("</tbody></table></div>");	
+		}
+		
+		function drawPast( id_canvas ) {
+			var canvas = document.getElementById( id_canvas );
+			try {
+				if (canvas.getContext) {
+					var ctx = canvas.getContext('2d');
+					ctx.fillRect(5, 5, 10, 10);
+				}		
+			} catch (e) {
+				null;
+			}
+		}
+		
+		function drawPastClear( id_canvas ) {
+			var canvas = document.getElementById( id_canvas );
+			try {
+				if (canvas.getContext) {
+					var ctx = canvas.getContext('2d');
+					ctx.clearRect(0, 0, 20, 20);
+				}		
+			} catch (e) {
+				null;
+			}
+		}
+
+		function drawShapePaint(shape) {
+			
+			for ( var i = 0; i < shape.length; i++ ) {
+				document.getElementById(shape[i].toString()).style.backgroundColor = 'gray';
+				document.getElementById(shape[i].toString()).style.borderColor = 'black'
+				drawPast( 'canva_' + shape[i] );	
+			}
+		}
+		
+		function clearShape(shape) {
+		
+			for ( var i = 0; i < shape.length; i++) {
+				document.getElementById(shape[i].toString()).style.background = 'none';
+				document.getElementById(shape[i].toString()).style.border = '0.1px solid #cdcdcd';
+				drawPastClear( 'canva_' + shape[i] );	
+			}
 		}
 		
 		function drawShapeWindow( args ) {
@@ -127,60 +169,7 @@
 				drawPastClear( 'canva_w_' + args[i] );	
 			}		
 		}
-
-		function drawPast( id_canvas ) {
-			var canvas = document.getElementById( id_canvas );
-			try {
-				if (canvas.getContext) {
-					var ctx = canvas.getContext('2d');
-					ctx.fillRect(0, 0, 8, 8);
-				}		
-			} catch (e) {
-				null;
-			}
-		}
 		
-		function drawPastClear( id_canvas ) {
-			var canvas = document.getElementById( id_canvas );
-			try {
-				if (canvas.getContext) {
-					var ctx = canvas.getContext('2d');
-					ctx.clearRect(0, 0, 8, 8);
-				}		
-			} catch (e) {
-				null;
-			}
-		}
-		
-		function finishGame(str) {
-
-			var btn = document.getElementsByTagName('button');
-
-			if ( str === '<H1>GAME OVER</H1>' ) {
-				
-				for ( var i = 0; i < btn.length; i++ ) {
-					btn[i].disabled = true;
-					btn[i].style.background = '#cdcdcd';
-				}
-				clearInterval(intervalIdTimer);
-			} 
-			else if ( str == '<H1>PAUSE</H1>' ) {
-				for ( var i = 1; i < btn.length; i++ ) {
-					btn[i].disabled = true;
-				}				
-			}
-
-			document.getElementById('notefication').innerHTML = str;
-			document.querySelector('.stop').innerHTML = 'RESUME';
-			document.getElementById('container').style.backgroundColor = 'gray';
-			document.querySelector('.point').style.color = 'white';
-			// console.log('method finishGame()');
-			
-			intervalId = setInterval(function(){
-				var a = document.getElementById('notefication').style.opacity || 1;
-				document.getElementById('notefication').style.opacity = ((parseInt(a)) ? 0 : 1);
-			}, 1e3);
-		}
 		
 		function gameValidate(args) 
 		{
@@ -249,16 +238,17 @@
 		function colovratiy() {
 			wall = wall.concat( shape_mod );
 			wall.sort( (a, b) => a - b );
-			recurPoint( wall );
+			recurPoint( wall, 0 );
 			init();		
 		}
 		
-		function recurPoint(arr) {
+		function recurPoint( arr, p_line ) {
 
 			var tmp = [];
 			var del = [];
 			var box = arr;
 			var j = 0;
+			var point_line = p_line;
 			
 			for ( var i = 0; i < box.length; i++ ) {
 			
@@ -304,10 +294,28 @@
 
 							setTimeout( drawShapePaint, 325, wall );
 
-							_score = _score + 10;
+							// _score = _score + 10;
+							point_line = point_line + 1;
 							
-							setTimeout( recurPoint, 325, wall );
-	
+							setTimeout( recurPoint, 325, wall, point_line );
+
+							switch ( point_line ) {
+								case 1:
+										_score = _score + 10;
+									break;
+								case 2:
+										_score = _score + 20;
+									break;
+								case 3:
+										_score = _score + 20;
+									break;
+								default:
+									null;
+							}
+							
+							document.querySelector('.point').innerHTML = 'S : ' + _score;
+							// console.log( point_line );
+							
 							k = box.length;
 							i = box.length;
 						}
@@ -315,9 +323,9 @@
 					else {
 						j = 0;
 						break;
-					}	
+					}
 				}
-			}
+			}			
 		}
 		
 		function fireWall( arg, i ) {
@@ -326,24 +334,6 @@
 				i !== 0 ? drawShapePaint( arg ) : null;
 				setTimeout( clearShape, 25, arg );
 				setTimeout( fireWall, 50, arg, ++i );
-			}
-		}
-		
-		function drawShapePaint(shape) {
-			
-			for ( var i = 0; i < shape.length; i++ ) {
-				document.getElementById(shape[i].toString()).style.backgroundColor = 'gray';
-				document.getElementById(shape[i].toString()).style.borderColor = 'black'
-				drawPast( 'canva_' + shape[i] );	
-			}
-		}
-		
-		function clearShape(shape) {
-		
-			for ( var i = 0; i < shape.length; i++) {
-				document.getElementById(shape[i].toString()).style.background = 'none';
-				document.getElementById(shape[i].toString()).style.border = '0.1px solid #cdcdcd';
-				drawPastClear( 'canva_' + shape[i] );	
 			}
 		}
 		
@@ -605,29 +595,67 @@
 		function pauseResume() {
 
 			var btn = document.getElementsByTagName('button');
-
-			if ( timeoutId !== undefined ) {
-				clearTimeout(timeoutId);
-				finishGame( '<H1>PAUSE</H1>' );
-				timeoutId = undefined;
-				
-				clearInterval( intervalIdTimer );
-				intervalIdTimer = undefined;
+			
+			if ( document.querySelector('.stop').textContent === "RESTART" ) {
+				document.location.reload();
+				// console.log('RESTART');
 			} 
 			else {
-				clearInterval( intervalId );
-				document.getElementById('container').style.backgroundColor = 'white';
-				document.getElementById('notefication').innerHTML = '';
-				document.querySelector('.point').style.color = 'black';
-				document.querySelector('.stop').innerHTML = 'PAUSE';
+				if ( timeoutId !== undefined ) {
+					clearTimeout(timeoutId);
+					finishGame( '<H1>PAUSE</H1>' );
+					timeoutId = undefined;
+					
+					clearInterval( intervalIdTimer );
+					intervalIdTimer = undefined;
+				} 
+				else {
+					clearInterval( intervalId );
+					document.getElementById('container').style.backgroundColor = 'white';
+					document.getElementById('notefication').innerHTML = '';
+					document.querySelector('.point').style.color = 'black';
+					document.querySelector('.stop').innerHTML = 'PAUSE';
 
-				for ( var i = 1; i < btn.length; i++ ) {
-					btn[i].disabled = false;
-				}
+					for ( var i = 1; i < btn.length; i++ ) {
+						btn[i].disabled = false;
+					}
 
-				setTimeout( drawShape, _speed );
-				intervalIdTimer = setInterval ( stopwatch, 5e2 );
+					setTimeout( drawShape, _speed );
+					intervalIdTimer = setInterval ( stopwatch, 5e2 );
+				}				
 			}
+		}
+		
+		function finishGame(str) {
+
+			var btn = document.getElementsByTagName('button');
+
+			if ( str === '<H1>GAME OVER</H1>' ) {
+				
+				for ( var i = 1; i < btn.length; i++ ) {
+					btn[i].disabled = true;
+					btn[i].style.background = '#cdcdcd';
+				}
+				clearInterval(intervalIdTimer);
+				document.querySelector('.stop').innerHTML = 'RESTART';
+			} 
+			else if ( str == '<H1>PAUSE</H1>' ) {
+				for ( var i = 1; i < btn.length; i++ ) {
+					btn[i].disabled = true;
+				}			
+				document.querySelector('.stop').innerHTML = 'RESUME';
+			}
+
+			document.getElementById('notefication').innerHTML = str;
+			
+			document.getElementById('container').style.backgroundColor = 'gray';
+			document.querySelector('.point').style.color = 'white';
+			// console.log('method finishGame()');
+			
+			intervalId = setInterval(function(){
+				var a = document.getElementById('notefication').style.opacity || 1;
+				document.getElementById('notefication').style.opacity = ((parseInt(a)) ? 0 : 1);
+			}, 1e3);
 		}
 
 		function stopwatch() {

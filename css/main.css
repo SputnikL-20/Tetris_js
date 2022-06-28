@@ -1,4 +1,7 @@
-
+		* {
+			margin: 0;
+			padding: 0;
+		}
 		@font-face {
 			font-family: "DS-Digital";
 			src: url("../fonts/DS-DIGIB.TTF");
@@ -8,34 +11,50 @@
 			position: relative;
 			clear: both;
 			font-family: "DS-Digital";
+			margin-top: 3%;
+			font-size: xx-large;
 		}
 		.level {
 			float: right;
 			position: relative;
 			clear: both;
 			font-family: "DS-Digital";
+			font-size: xx-large;
 		}
 		.display-area {
+			/* position: absolute; */
+			/* float: left; */
+			/* width: 60%; */
 			position: absolute;
-			float: left;	
-			top:10px;
+			/* float: left; */
+			width: 60%;
+			display: block;
 		}
 		.window-area {
-			position: fixed;
-			top:77px;
-			margin-left:110px;
+			position: relative;
+			width: 30%;
+			float: right;
+			top: 7%;
+			clear: both;
+			/* border: none; */
 		}		
         table{
-            border-collapse: collapse;
-            border-spacing: 0;
+			border-collapse: collapse;
+			border-spacing: 0;
+			margin-left: 5%;
+			margin-top: 5%;
         }
-        th, td {
-			width: 8px;
-			height: 8px;
-			font-size: 40%;
+		/* tr { */
+			/* height: 0px; */
+		/* } */
+        td {
+			/* width: 8px; */
+			/* height: 8px; */
+			/* font-size: 40%; */
             padding: 0;
-			margin: 0;
 			cursor: default;
+			/* width: 6%; */
+			/* border: 0.1px solid #cdcdcd; */
         }
 		.td-border {
 			border: 0.1px solid #cdcdcd;
@@ -59,29 +78,29 @@
 		}
 		
         canvas{
-			font-size: 40%;
-			margin: 0 auto;
-			padding-left: 25%;
-			padding-bottom: 5%;
+			display: block;
+			/* font-size: 40%; */
+			/* margin: 0 auto; */
+			/* padding-left: 25%; */
+			/* padding-bottom: 5%; */
         }
 		#container {
-			position:relative;
+			position: inherit;
 			padding: 10px;
-			width: 155px;
-			height: 270px;
+			margin: 10px;
+			height: 94vh;
 			border: 0.1px solid #cdcdcd;
 			z-index: 1;
 		}
+
 		#notefication {
-			position:fixed;
-			top: 6.5em;
-			/* margin: auto; */
-			/* padding-top: 85px; */
-			padding-left: 7px;
-			/* line-height: 5; */
+			position: fixed;
+			top: 8.5em;
+			padding-left: 13%;
 			font-family: "DS-Digital";
 			color: red;
 			z-index: 2;
+			font-size: xx-large;
 		}
 		h1 {
 			margin: 0 auto;
@@ -113,49 +132,80 @@
 			border: none;
 			text-decoration: none;
 		}	
+		.pause {
+			float: right;
+			position: relative;
+			clear: both;
+			/* font-size: xxx-large; */
+			top: 20%;
+			width: 30%;
+		}
 		
 		#comunication {
 			position: relative;
-			top: 11.3em;
-			height: 87px;
+			top: 14em;
+			clear: both;
 		}
 		#left {
 			position: relative;
 			top: 1em;
 		}
+		.left {
+			padding: 40px;	
+		}
 		.right {
-			margin-left:10px;		
+			margin-left: 21%;
+			padding: 40px;	
 		}
-		#down {
+		/* #down { */
+			/* position: relative; */
+			/* top: 1.5em;		 */
+			/* margin-left:27px;			 */
+		/* } */
+		.down {
 			position: relative;
-			top: 1.5em;		
-			margin-left:27px;			
+			top: 2em;
+			margin-left: 22%;
+			padding: 40px;		
 		}
-		#rotate {
-			position: absolute;
-			top: 1.8em;
-			margin-left: 109.5px;
-		}
+		/* #rotate { */
+			/* position: absolute; */
+			/* top: 10%; */
+		/* } */
 		.rotate {
-			padding: 24px;
+			position: absolute;
+			top: 4em;
+			padding: 60px;
+			margin-left: 68%;
 		}
 		.stop {
-		position: fixed;
-		top: 140px;
-		margin-left: 110px;
-		background: red;
-		width: 47px; /* Ширина кнопки */
-		height: 20px; /* Высота */
-		border-radius: 15%;
-		font-size: 75%;
-		font-family: "DS-Digital";
+			/* position: fixed; */
+			/* top: 140px; */
+			/* margin-left: 110px; */
+			background: none;
+			/* width: 47px; */
+			/* height: 20px; */
+			/* border-radius: 15%; */
+			cursor: pointer;
+			border: none;
+			/* text-decoration: none; */
+			color: black;
+			font-size: xx-large;
+			font-family: "DS-Digital";
+		}
+		.stop:active {
+			border: none;
+			text-decoration: none;
+			background: none;
 		}
 		#watch {
 			float: right;
 			position: relative;
 			clear: both;
 			font-family: "DS-Digital";
+			font-size: xx-large;
 		}
+		
 
 .clean-label {
   background-color: gray;

@@ -12,20 +12,25 @@
 <body>
 
 <div id="container">
-	<div id="notefication"></div>
-	<div class="point"></div>
-	<div class="level"></div>
+
+	<div class="point">S: 0</div>
+	<div class="level">L: 0</div>
 	<div id="watch">
 		<span id="hour">00</span>:<span id="min">00</span><span id="timer">:</span><span id="sec">00</span>
 	</div>
-	<script> drawArea(); </script>
+	
+		<script> drawArea(); </script>
 
-	<span class="pause">
+	<div id="notefication"></div>
+
+	<div class="pause">
 		<button class="button stop" onclick="pauseResume()">PAUSE</button>
-	</span>
+	</div>
+
 	<div id="comunication">
 		<div id="left">
 			<button class="button left" value="left" id="left_btn"></button>
+			<!-- <button class="button left" onclick="oneLeftShape(shape_mod);"></button> -->
 			<button class="button right" value="right" id="right_btn"></button>
 		</div>
 		<div id="down">
@@ -35,7 +40,11 @@
 			<button class="button rotate" onclick="rotateShape(shape_mod, _ID)"></button>
 		</div>
 	</div>
+
 </div>
+
+
+
 
 
     <script>
